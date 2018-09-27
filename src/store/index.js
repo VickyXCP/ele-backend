@@ -1,0 +1,44 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+import {Message} from 'element-ui'
+
+import {getAdminInfo} from '../api/getData'
+
+Vue.use(Vuex)
+
+const state = {
+  adminInfo: {
+    avatar: 'default.jpg'
+  }
+}
+
+const mutations = {
+  saveAdminInfo(state, adminInfo){
+    state.adminInfo = adminInfo
+  }
+}
+
+const actions = {
+  async getAdminData({commit}){
+    try {
+      const res = await getAdminInfo()
+      if (res.status == 1){
+        commit('saveAdminInfo', res.data)
+      } else {
+        throw new Error(res)
+      }
+    }catch (e) {
+      Message({
+        type: 'warning',
+        message: '您尚未登录或者session失效'
+      })
+    }
+  }
+}
+
+export default new Vuex.Store({
+  state,
+  mutations,
+  actions
+})
